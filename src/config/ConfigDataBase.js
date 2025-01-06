@@ -1,21 +1,22 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const User = require('../Model/User');
 
 
-mongoose.connect('mongodb://localhost:27017/vietz', {
+connection = mongoose.connect('mongodb://localhost:27017/vietz', {
 
 })
     .then(() => console.log('Connected to MongoDB Success'))
     .catch(err => console.error('Error connecting to MongoDB:', err));
 
 
-const userSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    age: { type: Number, required: false },
-});
+// const userSchema = new mongoose.Schema({
+//     name: { type: String, required: true },
+//     email: { type: String, required: true, unique: true },
+//     age: { type: Number, required: false },
+// });
 
-const User = mongoose.model('User', userSchema);
+// const User = mongoose.model('User', userSchema);
 
 
 // const newUser = new User({
@@ -29,4 +30,4 @@ const User = mongoose.model('User', userSchema);
 //     .catch(err => console.error('Error saving user:', err));
 
 
-module.exports = { mongoose, User };
+module.exports = { connection, User };
