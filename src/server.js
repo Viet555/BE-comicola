@@ -3,22 +3,34 @@ const app = express() //framwork giup chay dc 1 websv
 require('dotenv').config();
 const webRoutes = require('./routes/web')
 const connection = require('./config/ConfigDataBase')
-
+const Router = require('./routes/api')
 
 const port = process.env.PORT || 8888;
 const hostname = process.env.HOST_NAME;
+const cors = require('cors');
 const configViewEngine = require('./config/viewEngine')
 
 //config req.body => laasy len data
-app.use(express.json()) //for json
-app.use(express.urlencoded({ extends: true })) //for  form data 
+// app.use(function (req, res, next) {
+//     res.setHeader('Access-Control-Allow-Origin', process.env.REACT_URL);
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+//     res.setHeader('Access-Control-Allow-Credentials', true);
+//     next();
+// });
+
+app.use(cors());
+
+
+app.use(express.json({ limit: '50mb' }))
+app.use(express.urlencoded({ limit: '50mb', extends: true }))
 
 //config viewEngine
 configViewEngine(app);
 
 //khai bao route
-app.use('/', webRoutes);
-
+// app.use('/', webRoutes);
+app.use('/', Router)
 app.listen(port, hostname, () => {
     console.log(`example app listening on port ${port}`)
 })

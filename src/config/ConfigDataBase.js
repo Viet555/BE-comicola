@@ -1,9 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require('../Model/User');
+const AllCode = require('../Model/AllCode');
 
 
-connection = mongoose.connect('mongodb://localhost:27017/vietz', {
+connection = mongoose.connect('mongodb://localhost:27017/btaplon', {
 
 })
     .then(() => console.log('Connected to MongoDB Success'))
@@ -26,8 +27,13 @@ connection = mongoose.connect('mongodb://localhost:27017/vietz', {
 // });
 
 // newUser.save()
-//     .then(() => console.log('User saved successfully!', newUser))
-//     .catch(err => console.error('Error saving user:', err));
 
 
-module.exports = { connection, User };
+
+// async function getData() {
+//     const data = await AllCode.find();
+//     console.log(JSON.stringify(data, null, 2));
+// }
+
+// getData();
+module.exports = { connection, User, };

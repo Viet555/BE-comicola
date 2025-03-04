@@ -132,3 +132,34 @@ tr:hover {
 .hidden-id {
         display: none;
 }
+
+.talbe-check-score {
+        height: 200px;
+
+        margin-top: 40px;
+
+}
+
+.Header-tabel {
+        text-align: center;
+        font-size: 30px;
+        padding: 10px;
+}
+
+.Input_mssv {
+        font-size: 25px;
+        width: 20%;
+        border-radius: 10px;
+        height: 30px;
+}
+
+.content-check {
+        gap: 5px;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+}
+
+label {
+        font-size: 25px;
+}

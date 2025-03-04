@@ -1,9 +1,10 @@
 const connection = require('../config/ConfigDataBase')
-const { getAllusers, getUpdateUSer, handleUpdateUser, handeDeleteUser, CreateUser } = require('../sevices/CRUDservice')
+const { stringify } = require('flatted');
+const { getAllusers, getUpdateUSer, handleUpdateUser, handeDeleteUser, CreateUser, findScoreStudentService } = require('../sevices/CRUDservice')
 const getHomePage = async (req, res) => {
 
     let results = await getAllusers();
-    console.log("check result :", results)
+
     return res.render('Home.ejs', { listUser: results })
 
 }
@@ -31,17 +32,18 @@ const getCreate = (req, res) => {
 const GetEditUser = async (req, res) => {
     let userID = req.params.id
     let user = await getUpdateUSer(userID)
+    console.log('check Usert', user)
     res.render('Edituser.ejs', { userEdit: user })
 
 }
 const PostEditUser = async (req, res) => {
     // Using placeholders
-    email = req.body.email;
-    namee = req.body.Myname;
-    city = req.body.city;
-    UserId = req.body.UserId
+    Mssv = req.body.Mssv;
+    Myname = req.body.Myname;
+    score = req.body.score;
 
-    await handleUpdateUser(email, namee, city, UserId)
+
+    await handleUpdateUser(email, name, city, UserId)
 
     res.redirect('/')
 
@@ -50,13 +52,35 @@ const GetDeleteUser = async (req, res) => {
     let userID = req.params.id
 
     let user = await getUpdateUSer(userID)
-    res.render('deleteUser.ejs', { userDele: user })
+    res.render('deleteUser.ejs', { userDele: user },)
 }
-const postDeleteUser = async (req, res) => {
-    const id = req.body.UserId
-    console.log("check ", id)
-    await handeDeleteUser(id)
-    res.redirect('/')
+const DeleteUser = async (req, res) => {
+    try {
+
+
+        await handeDeleteUser(req.body)
+        res.redirect('/')
+    } catch (e) {
+        console.log(e)
+        return res.status(200).json({
+            errCode: 1,
+            message: ' Err from server'
+        })
+    }
 
 }
-module.exports = { getHomePage, getVietz, PostUser, getCreate, GetEditUser, PostEditUser, GetDeleteUser, postDeleteUser }
+const findScoreStudent = async (req, res) => {
+    try {
+        mssv = req.body.Mssv
+        let Score = await findScoreStudentService(mssv)
+        console.log(Score)
+        res.status(200).json({ Score: JSON.parse(stringify(Score)) });
+    } catch (e) {
+        console.log(e)
+        res.status(200).json({
+            errCode: 1,
+            message: 'Err from server'
+        })
+    }
+}
+module.exports = { getHomePage, getVietz, PostUser, getCreate, GetEditUser, PostEditUser, GetDeleteUser, DeleteUser, findScoreStudent }
