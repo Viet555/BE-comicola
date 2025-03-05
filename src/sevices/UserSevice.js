@@ -136,19 +136,25 @@ const UserLogin = async (dataLog) => {
         }
     })
 }
-const handleGetAllUser = (id) => {
+const handleGetAllUser = (id, limit, page) => {
     return new Promise(async (resolve, reject) => {
 
-
         try {
+            let totalUsers = await connection.User.countDocuments();
+            let totalPages = Math.ceil(totalUsers / limit);
             let dataUsers = ''
             if (id === 'ALL') {
-                let dataUsers = await connection.User.find().select('-password')
+                let dataUsers = await connection.User.find()
+                    .skip((page - 1) * limit) // Bỏ qua user của trang trước
+                    .limit(limit) // Giới hạn số user trên mỗi trang
+                    .select('-password'); // Không trả về mật khẩu
 
                 resolve({
                     EC: 0,
                     MES: 'fetch All Success',
-                    data: dataUsers
+                    data: dataUsers,
+                    totalPages: totalPages, // Số trang tổng cộng
+                    currentPage: page // Trang hiện tại
                 }
                 )
             }

@@ -23,9 +23,15 @@ const handleLogin = async (req, res) => {
 }
 const getAllUser = async (req, res) => {
     let id = req.query.id
+    let limit = req.query.limit
+    let page = req.query.page
+
     if (!id) id = 'ALL'
+    if (!limit) limit = '6'
+
     try {
-        let data = await handleGetAllUser(id)
+
+        let data = await handleGetAllUser(id, limit, page)
         return res.status(200).json(data)
     } catch (e) {
         console.log(e)
