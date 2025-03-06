@@ -176,17 +176,12 @@ const handleGetAllUser = (id, limit, page) => {
                         MES: 'USER NOT FOUND !'
                     })
                 }
-
-
             }
             // resolve({
             //     Ec: 0,
             //     MES: 'Fetch All User SS',
             //     data: dataUsers
             // })
-
-
-
         } catch (e) {
             reject(e)
         }

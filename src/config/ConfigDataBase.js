@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const User = require('../Model/User');
 const AllCode = require('../Model/AllCode');
+const Product = require('../Model/Product');
 
 
 connection = mongoose.connect('mongodb://localhost:27017/btaplon', {
@@ -36,4 +37,4 @@ connection = mongoose.connect('mongodb://localhost:27017/btaplon', {
 // }
 
 // getData();
-module.exports = { connection, User, };
+module.exports = { connection, User, Product };
