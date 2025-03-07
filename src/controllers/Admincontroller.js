@@ -1,4 +1,4 @@
-const { handleCreateProduct, handleGetAlldata, handleDeleteProduct, handleUpdateProduct } = require("../sevices/AdminService")
+const { handleCreateProduct, handleGetAlldata, handleDeleteProduct, handleUpdateProduct, handleGetDataTypes, handleGetAlldataPagiNate } = require("../sevices/AdminService")
 
 
 const CreateNewProduct = async (req, res) => {
@@ -15,10 +15,12 @@ const CreateNewProduct = async (req, res) => {
 }
 const getProductBytype = async (req, res) => {
     try {
-        type = req.body.typeProduct
-        limit = req.body.limit
-        if (!limit) limit = ''
-        let dataGet = await handleGetAlldata(type, limit)
+        type = req.query.type
+        limit = req.query.limit
+        page = req.query.page
+        if (!limit) limit = '6'
+
+        let dataGet = await handleGetAlldataPagiNate(type, limit, page)
         return res.status(200).json(dataGet)
     } catch (e) {
         console.log(e)
@@ -54,4 +56,17 @@ const updateProduct = async (req, res) => {
         })
     }
 }
-module.exports = { CreateNewProduct, getProductBytype, deleteAproduct, updateProduct }
+const getDataType = async (req, res) => {
+    try {
+        let type = await handleGetDataTypes()
+        return res.status(200).json(type)
+    } catch (e) {
+        console.log(e)
+        return res.status(200).json({
+            EC: 1,
+            MEs: 'err from sv'
+        })
+
+    }
+}
+module.exports = { CreateNewProduct, getProductBytype, deleteAproduct, updateProduct, getDataType }

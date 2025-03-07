@@ -4,7 +4,7 @@ const handleCreateProduct = (dataProduct) => {
 
     return new Promise(async (resolve, reject) => {
         try {
-            if (!dataProduct.nameProduct || !dataProduct.count || !dataProduct.desProduct || !dataProduct.code || !dataProduct.typeProduct || !dataProduct.image1 || !dataProduct.image2) {
+            if (!dataProduct.nameProduct || !dataProduct.count || !dataProduct.desProduct || !dataProduct.code || !dataProduct.typeProduct || !dataProduct.image1) {
                 resolve({
                     EC: 1,
                     MES: 'Missing Input Params'
@@ -54,23 +54,49 @@ const checkCodeProduct = async (codePro) => {
         console.log(e)
     }
 }
-const handleGetAlldata = (type, limit) => {
+const handleGetAlldataPagiNate = (type, limit, page) => {
     return new Promise(async (resolve, reject) => {
+
         try {
+
+            let totalProduct = await connection.Product.countDocuments();
+
+            let totalPages = Math.ceil(totalProduct / limit);
+
+            let product = ''
             if (type) {
-                let product = await connection.Product.find({ typeProduct: type }).limit(limit)
-                resolve({
-                    EC: 0,
-                    MES: 'Fecth product ok ',
-                    data: product
-                })
+                let product = await connection.Product.find({ typeProduct: type })
+                    .limit(limit)
+                    .skip((page - 1) * limit)
+                if (product) {
+                    resolve({
+                        EC: 0,
+                        MES: 'Fecth product ok ',
+                        data: product,
+                        totalPages: totalPages,
+                        currentPage: page
+                    })
+                } else {
+
+                    resolve({
+                        EC: 2,
+                        MES: 'Product not foul',
+
+                    })
+                }
+
             }
             else {
-                let product = await connection.Product.find().limit(limit)
+
+                let product = await connection.Product.find()
+                    .limit(limit)
+                    .skip((page - 1) * limit)
                 resolve({
                     EC: 0,
                     MES: 'Fecth All Product ok ',
-                    data: product
+                    data: product,
+                    totalPages: totalPages,
+                    currentPage: page
                 })
             }
         } catch (e) {
@@ -146,4 +172,23 @@ const handleUpdateProduct = (ProductId) => {
         }
     })
 }
-module.exports = { handleCreateProduct, handleGetAlldata, handleDeleteProduct, handleUpdateProduct }
+const handleGetDataTypes = async () => {
+    try {
+        let dataType = await connection.AllCode.find()
+        if (dataType) {
+            return ({
+                EC: 0,
+                MES: 'Fetch Success',
+                data: dataType
+            })
+        } else {
+            return ({
+                EC: -2,
+                MES: 'Err '
+            })
+        }
+    } catch (e) {
+        console.log(e)
+    }
+}
+module.exports = { handleCreateProduct, handleGetAlldataPagiNate, handleDeleteProduct, handleUpdateProduct, handleGetDataTypes }

@@ -37,4 +37,4 @@ connection = mongoose.connect('mongodb://localhost:27017/btaplon', {
 // }
 
 // getData();
-module.exports = { connection, User, Product };
+module.exports = { connection, User, Product, AllCode };
