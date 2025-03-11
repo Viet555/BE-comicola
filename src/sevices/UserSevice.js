@@ -146,8 +146,8 @@ const handleGetAllUser = (id, limit, page) => {
             if (id === 'ALL') {
                 let dataUsers = await connection.User.find()
                     .skip((page - 1) * limit) // Bỏ qua user của trang trước
-                    .limit(limit) // Giới hạn số user trên mỗi trang
-                    .select('-password'); // Không trả về mật khẩu
+                    .limit(limit)
+                    .select('-password');
 
                 resolve({
                     EC: 0,
@@ -252,4 +252,5 @@ const handleUpdateUser = (dataEdit) => {
         }
     })
 }
-module.exports = { CreateUserService, UserLogin, handleGetAllUser, handleDeleteUser, handleUpdateUser }
+
+module.exports = { CreateUserService, UserLogin, handleGetAllUser, handleDeleteUser, handleUpdateUser, }
