@@ -394,6 +394,14 @@ const handleDeleteBanner = (id) => {
 const handleFetchAllProduct = async (type, limit) => {
     try {
 
+        if (type && limit) {
+            let dataProduct = await connection.Product.find({ typeProduct: type }).limit(limit).sort({ createdAt: -1 })
+            return ({
+                EC: 0,
+                MES: 'Fetch limit by type Success',
+                data: dataProduct
+            })
+        }
         if (type) {
             let dataProduct = await connection.Product.find({ typeProduct: type })
             return ({
@@ -402,19 +410,12 @@ const handleFetchAllProduct = async (type, limit) => {
                 data: dataProduct
             })
         }
-        if (type && limit) {
-            let dataProduct = await connection.Product.find({ typeProduct: type }).limit(limit)
-            return ({
-                EC: 0,
-                MES: 'Fetch All by type Success',
-                data: dataProduct
-            })
-        }
+
         if (limit) {
             let dataProduct = await connection.Product.find().limit(limit).sort({ createdAt: -1 })
             return ({
                 EC: 0,
-                MES: 'Fetch All Success',
+                MES: 'Fetch Product limit Success',
                 data: dataProduct
             })
         }

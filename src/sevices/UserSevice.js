@@ -23,9 +23,10 @@ const CreateUserService = (dataUser) => {
             let hashPasswordUser = await hashUserPassword(dataUser.password)
             if (checkEmail == false) {
                 if (!dataUser.roleId) {
-                    dataUser.roleId = 'User'
+                    roleId = 'User'
                 }
                 let data = await connection.User.create({
+
                     firstName: dataUser.firstName,
                     lastName: dataUser.lastName,
                     password: hashPasswordUser,
@@ -97,7 +98,7 @@ const UserLogin = async (dataLog) => {
                     { email: dataLog.email },
 
                 )
-                console.log(user)
+
                 if (user) {
                     //sspass
                     let checkPass = await bcrypt.compareSync(dataLog.password, user.password)
