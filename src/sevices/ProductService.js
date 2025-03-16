@@ -30,17 +30,24 @@ const MarkdownService = (dataMarkDown) => {
                 })
 
             } else if (dataMarkDown.action === 'EDIT') {
-                let data = await connection.Markdown.findByIdAndUpdate(
-                    { _id: dataMarkDown.productId },
+                let data = await connection.Markdown.findOneAndUpdate(
+                    { productId: dataMarkDown.productId },
                     {
                         contentMarkdown: dataMarkDown.contentMarkdown,
                         contentHTML: dataMarkDown.contentHTML,
-                    }
+                    },
+                    { new: true } // Ensure the updated document is returned
 
                 )
+                if (!data) {
+                    return resolve({
+                        EC: -1,
+                        MES: 'Product not found'
+                    });
+                }
                 resolve({
-                    errCode: 0,
-                    message: 'Up data Success',
+                    EC: 0,
+                    MES: 'Up data Success',
                     data
                 })
             }
@@ -51,7 +58,7 @@ const MarkdownService = (dataMarkDown) => {
                 if (check) {
 
                     resolve({
-                        ECL: 3,
+                        EC: 3,
                         MES: 'Markdown isExist please update or create new'
                     })
                 } else {
@@ -65,8 +72,8 @@ const MarkdownService = (dataMarkDown) => {
                         { $push: { markdowns: data._id } }
                     );
                     resolve({
-                        errCode: 0,
-                        message: 'Create data Success',
+                        EC: 0,
+                        MES: 'Create data Success',
                         data
                     })
                 }
@@ -78,6 +85,56 @@ const MarkdownService = (dataMarkDown) => {
         }
     })
 }
+const sortProductService = (sort) => {
+    return new Promise(async (resolve, reject) => {
 
+        try {
+            let data = []
+            if (!sort) {
+                let dataSort = await connection.Product.find().sort({ createdAt: -1 })
+                resolve({
+                    EC: 0,
+                    MES: 'sort DESC success',
+                    dataSort
+                })
+            }
 
-module.exports = { getdataDetailService, MarkdownService }
+            if (sort === 'DESC') {
+                let dataSort = await connection.Product.find().sort({ createdAt: -1 })
+                resolve({
+                    EC: 0,
+                    MES: 'sort DESC success',
+                    dataSort
+                })
+            }
+            if (sort === 'ASC') {
+                let dataSort = await connection.Product.find().sort({ createdAt: 1 })
+                resolve({
+                    EC: 0,
+                    MES: 'sort ACS success',
+                    dataSort
+                })
+            }
+            if (sort === 'LOWPRICE') {
+                let dataSort = await connection.Product.find().sort({ count: 1 })
+                resolve({
+                    EC: 0,
+                    MES: 'sort LOWPRICE success',
+                    dataSort
+                })
+            }
+            if (sort === 'HIGHPRICE') {
+                let dataSort = await connection.Product.find().sort({ count: -1 })
+                resolve({
+                    EC: 0,
+                    MES: 'sort HIGHPRICE success',
+                    dataSort
+                })
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+module.exports = { getdataDetailService, MarkdownService, sortProductService }

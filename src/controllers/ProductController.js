@@ -1,4 +1,4 @@
-const { getdataDetailService, MarkdownService } = require("../sevices/ProductService")
+const { getdataDetailService, MarkdownService, sortProductService } = require("../sevices/ProductService")
 
 const getDetailProduct = async (req, res) => {
     try {
@@ -26,4 +26,18 @@ const handleMarkDown = async (req, res) => {
         })
     }
 }
-module.exports = { getDetailProduct, handleMarkDown }
+const fetchAllProductBySort = async (req, res) => {
+    try {
+        let sort = req.query.sort
+
+        let dataSort = await sortProductService(sort)
+        return res.status(200).json(dataSort)
+    } catch (e) {
+        console.log(e)
+        return res.status(400).json({
+            EC: 1,
+            MES: 'Err from sv'
+        })
+    }
+}
+module.exports = { getDetailProduct, handleMarkDown, fetchAllProductBySort }

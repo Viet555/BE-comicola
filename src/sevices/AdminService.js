@@ -393,7 +393,7 @@ const handleDeleteBanner = (id) => {
 }
 const handleFetchAllProduct = async (type, limit) => {
     try {
-
+        console.log(limit)
         if (type && limit) {
             let dataProduct = await connection.Product.find({ typeProduct: type }).limit(limit).sort({ createdAt: -1 })
             return ({

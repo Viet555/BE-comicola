@@ -2,7 +2,7 @@ const express = require('express')
 const { CreateUser, handleLogin, getAllUser, deleteUser, UpdateUser } = require('../controllers/UserController')
 const { CreateNewProduct, getProductBytype, deleteAproduct, updateProduct, getDataType, createBanner, updateBanner,
     getAllBanner, Deletebanner, fetchAllProductByType } = require('../controllers/Admincontroller')
-const { getDetailProduct, handleMarkDown } = require('../controllers/ProductController')
+const { getDetailProduct, handleMarkDown, fetchAllProductBySort } = require('../controllers/ProductController')
 
 const Router = express.Router()
 
@@ -26,6 +26,7 @@ Router.delete('/api/Delete-banner', Deletebanner)
 
 Router.get('/fetchAllProduct-byType', fetchAllProductByType)
 Router.get('/getAproduct-Detail', getDetailProduct)
+Router.get('/fetchAllProduct-bySort', fetchAllProductBySort)
 //Markdown
 Router.post('/Create-Update-Markdown', handleMarkDown)
 module.exports = Router

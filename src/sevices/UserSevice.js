@@ -189,7 +189,7 @@ const handleGetAllUser = (id, limit, page) => {
     })
 }
 const handleDeleteUser = (UserId) => {
-    console.log(UserId)
+
     return new Promise(async (resolve, reject) => {
 
         try {
