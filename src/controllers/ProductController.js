@@ -1,4 +1,4 @@
-const { getdataDetailService, MarkdownService, sortProductService } = require("../sevices/ProductService")
+const { getdataDetailService, MarkdownService, sortProductService, handleAddtoCart, handleGetCart } = require("../sevices/ProductService")
 
 const getDetailProduct = async (req, res) => {
     try {
@@ -40,4 +40,32 @@ const fetchAllProductBySort = async (req, res) => {
         })
     }
 }
-module.exports = { getDetailProduct, handleMarkDown, fetchAllProductBySort }
+const addToCart = async (req, res) => {
+    try {
+
+        let { userId, productId, quantity } = req.body
+        let response = await handleAddtoCart(userId, productId, quantity)
+        return res.status(200).json(response)
+    } catch (e) {
+        console.log(e)
+        return res.status(404).json({
+            EC: 1,
+            MES: 'err From sv'
+        })
+    }
+}
+const getCart = async (req, res) => {
+    try {
+        let { userId } = req.query;
+        let response = await handleGetCart(userId)
+        return res.status(200).json(response)
+
+    } catch (e) {
+        console.log(e)
+        return res.status(404).json({
+            EC: 1,
+            MES: 'err From sv'
+        })
+    }
+}
+module.exports = { getDetailProduct, handleMarkDown, fetchAllProductBySort, addToCart, getCart }

@@ -103,12 +103,23 @@ const UserLogin = async (dataLog) => {
                     //sspass
                     let checkPass = await bcrypt.compareSync(dataLog.password, user.password)
                     if (checkPass) {
+                        let userData = user.toObject();// chueyn sag plan obj
+                        delete userData.password;
+
+                        let cart = await connection.Cart.findOne({ userId: user._id })
+                        if (cart) {
+                            userData.cart = cart
+                        }
+                        if (!cart) {
+                            userData.cart = {}
+                        }
                         resolve({
                             EC: 0,
                             MES: ' OK',
-                            data: user
+                            data: userData,
+
                         })
-                        delete user.password
+
                     }
                     else {
                         resolve({

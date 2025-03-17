@@ -1,3 +1,4 @@
+const { Connection } = require('mongoose');
 const connection = require('../config/ConfigDataBase')
 const getdataDetailService = async (id) => {
     try {
@@ -137,4 +138,69 @@ const sortProductService = (sort) => {
     })
 }
 
-module.exports = { getdataDetailService, MarkdownService, sortProductService }
+const handleAddtoCart = async (userId, productId, quantity) => {
+
+    try {
+        let cart = await connection.Cart.findOne({ userId })
+
+        if (!cart) {
+            cart = new connection.Cart({ userId, item: [], totalPrice: 0 });
+        }
+
+        let product = await connection.Product.findById(productId)
+
+        if (!product) {
+            return (
+                {
+                    EC: 1,
+                    MES: "Product not foul"
+                }
+            );
+        }
+
+        let existingItem = cart.items.find(item => item.productId.toString() === productId)
+
+
+        let productCount = Number(product.count.toString().replace(/,/g, ''));
+        let qty = Number(quantity);
+
+        if (isNaN(productCount) || isNaN(qty)) {
+            throw new Error("Invalid product count or quantity");
+        }
+
+        if (!cart.totalPrice || isNaN(cart.totalPrice)) {
+            cart.totalPrice = 0;
+        }
+        if (existingItem) {
+            existingItem.quantity += qty;
+        }
+
+        else {
+            cart.items.push({ productId, quantity });
+        }
+        cart.totalPrice += productCount * qty;
+        await cart.save();
+        return ({
+            EC: 0,
+            MES: "Thêm vào giỏ hàng thành công",
+            cart
+        });
+
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+const handleGetCart = async (userId) => {
+    try {
+        let cart = await connection.Cart.findOne({ userId }).populate('items.productId', 'nameProduct count image1 typeProduct');
+        if (!cart) return res.status(404).json({
+            EC: 1,
+            MES: "cart is empty"
+        });
+        return ({ EC: 0, MES: "Lấy giỏ hàng thành công", cart });
+    } catch (error) {
+        console.log(error)
+    }
+}
+module.exports = { getdataDetailService, MarkdownService, sortProductService, handleAddtoCart, handleGetCart }

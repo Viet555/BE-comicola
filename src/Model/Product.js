@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const ProductSchema = new mongoose.Schema({
     nameProduct: { type: String, required: true, },
+    stock: { type: Number, required: true, default: 0 },
     count: {
         type: Number, get: (value) => {
             if (value === undefined || value === null) {
@@ -8,6 +9,11 @@ const ProductSchema = new mongoose.Schema({
             }
             return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }, required: true,
+        // set: (value) => {
+
+        //     return Number(value.toString().replace(/,/g, ''));// get khi lay // set khi luu
+        // },
+        // required: true,
     },
     note: { type: String, },
     desProduct: { type: String, required: true, },

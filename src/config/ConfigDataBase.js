@@ -5,6 +5,8 @@ const AllCode = require('../Model/AllCode');
 const Product = require('../Model/Product');
 const Banner = require('../Model/BannerHome');
 const Markdown = require('../Model/Markdown');
+const Order = require('../Model/Order');
+const Cart = require('../Model/Cart');
 
 
 connection = mongoose.connect('mongodb://localhost:27017/btaplon', {
@@ -39,4 +41,4 @@ connection = mongoose.connect('mongodb://localhost:27017/btaplon', {
 // }
 
 // getData();
-module.exports = { connection, User, Product, AllCode, Banner, Markdown };
+module.exports = { connection, User, Product, AllCode, Banner, Markdown, Order, Cart };
