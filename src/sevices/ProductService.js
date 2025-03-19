@@ -173,10 +173,11 @@ const handleAddtoCart = async (userId, productId, quantity) => {
         }
         if (existingItem) {
             existingItem.quantity += qty;
+            existingItem.total = existingItem.quantity * productCount
         }
 
         else {
-            cart.items.push({ productId, quantity });
+            cart.items.push({ productId, quantity, total: productCount * quantity });
         }
         cart.totalPrice += productCount * qty;
         await cart.save();
@@ -194,13 +195,101 @@ const handleAddtoCart = async (userId, productId, quantity) => {
 const handleGetCart = async (userId) => {
     try {
         let cart = await connection.Cart.findOne({ userId }).populate('items.productId', 'nameProduct count image1 typeProduct');
-        if (!cart) return res.status(404).json({
+        if (!cart) return ({
             EC: 1,
             MES: "cart is empty"
         });
-        return ({ EC: 0, MES: "Lấy giỏ hàng thành công", cart });
+        return ({ EC: 0, MES: "Get cart successfully", cart });
     } catch (error) {
         console.log(error)
     }
 }
-module.exports = { getdataDetailService, MarkdownService, sortProductService, handleAddtoCart, handleGetCart }
+const handleDeleteCart = async (userId, productId) => {
+    try {
+        let cart = await connection.Cart.findOne({ userId });
+        if (!cart) return ({
+            EC: 1,
+            MES: 'Cart does not exist'
+        })
+        let itemIndex = cart.items.findIndex(item => item.productId.toString() === productId)
+        if (itemIndex === -1) return {
+            EC: 1,
+            MES: "Product not in cart"
+        };
+        let item = cart.items[itemIndex]
+        // Chuyển product.count sang num
+        let product = await connection.Product.findById(productId);
+        let productCount = Number(product.count.toString().replace(/,/g, ''));
+        // tinh tien
+        cart.totalPrice -= productCount * item.quantity
+        //
+        cart.items.splice(itemIndex, 1)
+        await cart.save();
+        return ({
+            EC: 0,
+            MES: "Delete Success"
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+const HandleCheckOut = async (userId, paymentMethod, address, phoneNumber) => {
+    try {
+        if (!address || !phoneNumber) {
+            return ({
+                EC: -2,
+                MES: 'Missing input '
+            })
+        }
+        let cart = await connection.Cart.findOne({ userId }).populate('items.productId')
+        if (!cart || cart.items.length === 0) {
+            return ({
+                EC: 1,
+                MES: 'cart is empty'
+            })
+        }
+
+        let order = new connection.Order({
+            userId,
+            items: cart.items.map(item => ({
+                productId: item.productId._id,
+                quantity: item.quantity,
+                price: Number(item.productId.count.toString().replace(/,/g, '')) * item.quantity
+            })),
+            totalAmount: cart.totalPrice,
+            paymentMethod,
+            status: 'Pending',
+
+            address: address,
+            phoneNumber: phoneNumber
+        })
+        await order.save();
+        await connection.Cart.deleteOne({ userId })
+
+        return ({
+            EC: 0,
+            MES: "Payment successful", order
+        });
+    } catch (error) {
+        console.log(error)
+    }
+}
+const getHistoryService = async (userId) => {
+    try {
+        if (!userId) {
+            return ({
+                EC: -1,
+                MES: 'missing id'
+            })
+        }
+        let orders = await connection.Order.find({ userId }).populate('items.productId', 'nameProduct price');
+        return ({
+            EC: 0,
+            MES: "get history success",
+            orders
+        });
+    } catch (e) {
+        console.log(e)
+    }
+}
+module.exports = { getdataDetailService, MarkdownService, sortProductService, handleAddtoCart, handleGetCart, handleDeleteCart, HandleCheckOut, getHistoryService }

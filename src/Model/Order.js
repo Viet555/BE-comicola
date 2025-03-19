@@ -11,7 +11,10 @@ const OrderSchema = new mongoose.Schema({
     ],
     totalAmount: { type: Number, required: true },
     status: { type: String, enum: ['Pending', 'Paid', 'Shipped', 'Completed', 'Canceled'], default: 'Pending' },
-    paymentMethod: { type: String, enum: ['Credit Card', 'PayPal', 'Crypto', 'COD'], required: true },
+    paymentMethod: { type: String, enum: ['Credit Card', 'PayPal', 'Crypto', 'COD', 'Cash'], required: true },
+
+    address: { type: String, required: true },
+    phoneNumber: { type: String, required: true },
 }, { timestamps: true });
 
 const Order = mongoose.model('Order', OrderSchema);

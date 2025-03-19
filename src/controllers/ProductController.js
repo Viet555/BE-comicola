@@ -1,4 +1,4 @@
-const { getdataDetailService, MarkdownService, sortProductService, handleAddtoCart, handleGetCart } = require("../sevices/ProductService")
+const { getdataDetailService, MarkdownService, sortProductService, handleAddtoCart, handleGetCart, handleDeleteCart, HandleCheckOut, getHistoryService } = require("../sevices/ProductService")
 
 const getDetailProduct = async (req, res) => {
     try {
@@ -68,4 +68,48 @@ const getCart = async (req, res) => {
         })
     }
 }
-module.exports = { getDetailProduct, handleMarkDown, fetchAllProductBySort, addToCart, getCart }
+const DeleteCart = async (req, res) => {
+    try {
+        let { productId, userId } = req.query;
+        let response = await handleDeleteCart(userId, productId)
+        return res.status(200).json(response)
+
+    } catch (e) {
+        console.log(e)
+        return res.status(404).json({
+            EC: 1,
+            MES: 'err From sv'
+        })
+    }
+}
+const Ordercheckout = async (req, res) => {
+    try {
+        let { userId, paymentMethod, address, phoneNumber } = req.body
+
+        let response = await HandleCheckOut(userId, paymentMethod, address, phoneNumber)
+        return res.status(200).json(response)
+
+    } catch (e) {
+        console.log(e)
+        return res.status(404).json({
+            EC: 1,
+            MES: 'err From sv'
+        })
+    }
+}
+const getHistory = async (req, res) => {
+    try {
+        let { userId, } = req.query
+
+        let response = await getHistoryService(userId)
+        return res.status(200).json(response)
+
+    } catch (e) {
+        console.log(e)
+        return res.status(404).json({
+            EC: 1,
+            MES: 'err From sv'
+        })
+    }
+}
+module.exports = { getDetailProduct, handleMarkDown, fetchAllProductBySort, addToCart, getCart, DeleteCart, Ordercheckout, getHistory }

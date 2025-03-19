@@ -2,7 +2,7 @@ const express = require('express')
 const { CreateUser, handleLogin, getAllUser, deleteUser, UpdateUser } = require('../controllers/UserController')
 const { CreateNewProduct, getProductBytype, deleteAproduct, updateProduct, getDataType, createBanner, updateBanner,
     getAllBanner, Deletebanner, fetchAllProductByType } = require('../controllers/Admincontroller')
-const { getDetailProduct, handleMarkDown, fetchAllProductBySort, addToCart, getCart } = require('../controllers/ProductController')
+const { getDetailProduct, handleMarkDown, fetchAllProductBySort, addToCart, getCart, DeleteCart, Ordercheckout, getHistory } = require('../controllers/ProductController')
 
 const Router = express.Router()
 
@@ -32,4 +32,7 @@ Router.post('/Create-Update-Markdown', handleMarkDown)
 //cart
 Router.post('/add-product-tocart', addToCart)
 Router.get('/get-product-tocart', getCart)
+Router.delete('/Delete-product-cart-User', DeleteCart)
+Router.post('/Ordercheckout-Product', Ordercheckout)
+Router.get('/api/getHistory-Order', getHistory)
 module.exports = Router
