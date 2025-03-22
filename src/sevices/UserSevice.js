@@ -224,7 +224,6 @@ const handleDeleteUser = (UserId) => {
 }
 const handleUpdateUser = (dataEdit) => {
     return new Promise(async (resolve, reject) => {
-
         try {
             if (!dataEdit._id) {
                 resolve({
@@ -232,27 +231,45 @@ const handleUpdateUser = (dataEdit) => {
                     MES: 'Missing Input Id '
                 })
             }
+            const user = await connection.User.findById(dataEdit._id);
+            if (!user) {
+                return resolve({
+                    EC: -1,
+                    MES: 'User not found'
+                });
+            }
+            let updateData = {
+                firstName: dataEdit.firstName,
+                lastName: dataEdit.lastName,
+                address: dataEdit.address,
+                roleId: dataEdit.roleId,
+                gender: dataEdit.gender,
+                phoneNumber: dataEdit.phoneNumber,
+                image: dataEdit.avatar,
+            }
+            if (dataEdit.currentPassword) {
+                //ss
+                let isMatch = await bcrypt.compare(dataEdit.currentPassword, user.password)
+                if (!isMatch) {
+                    resolve({
+                        EC: -1,
+                        MES: 'Mật khẩu hiện tại không chính xác'
+                    })
+                }
+                updateData.password = await hashUserPassword(dataEdit.newPassword)
+            }
+
             let User = await connection.User.findOneAndUpdate({
                 _id: dataEdit._id
             },
-                {
-                    firstName: dataEdit.firstName,
-                    lastName: dataEdit.lastName,
-                    address: dataEdit.address,
-                    roleId: dataEdit.roleId,
-                    gender: dataEdit.gender,
-                    phoneNumber: dataEdit.phoneNumber,
-                    image: dataEdit.avatar,
-                }
+                updateData,
             )
-
             if (!User) {
                 return resolve({
                     EC: -1,
                     MES: 'User not found'
                 });
             }
-
             resolve({
                 EC: 0,
                 MES: 'User updated successfully',
@@ -264,5 +281,6 @@ const handleUpdateUser = (dataEdit) => {
         }
     })
 }
+
 
 module.exports = { CreateUserService, UserLogin, handleGetAllUser, handleDeleteUser, handleUpdateUser, }

@@ -259,9 +259,10 @@ const HandleCheckOut = async (userId, paymentMethod, address, phoneNumber) => {
             totalAmount: cart.totalPrice,
             paymentMethod,
             status: 'Pending',
-
             address: address,
-            phoneNumber: phoneNumber
+            phoneNumber: phoneNumber,
+            orderCode: `ORD-${Math.floor(1000 + Math.random() * 9000)}`
+
         })
         await order.save();
         await connection.Cart.deleteOne({ userId })
@@ -282,7 +283,7 @@ const getHistoryService = async (userId) => {
                 MES: 'missing id'
             })
         }
-        let orders = await connection.Order.find({ userId }).populate('items.productId', 'nameProduct price');
+        let orders = await connection.Order.find({ userId }).populate('items.productId', 'nameProduct price image1',);
         return ({
             EC: 0,
             MES: "get history success",
@@ -292,4 +293,36 @@ const getHistoryService = async (userId) => {
         console.log(e)
     }
 }
-module.exports = { getdataDetailService, MarkdownService, sortProductService, handleAddtoCart, handleGetCart, handleDeleteCart, HandleCheckOut, getHistoryService }
+const handleGetProductBySearch = async (name) => {
+    try {
+        if (!name) {
+            return ({
+                EC: 1,
+                MES: 'missing Input'
+            })
+        }
+        let products = await connection.Product.find({
+            nameProduct: { $regex: name, $options: 'i' }
+        })
+        if (products.length > 0) {
+            return ({
+
+                EC: 0,
+                MES: 'Search successful',
+                products
+            });
+        } else {
+            return {
+                EC: 1,
+                MES: 'No products found',
+                products: []
+            };
+        }
+    } catch (e) {
+        console.log(e)
+    }
+}
+module.exports = {
+    getdataDetailService, MarkdownService, sortProductService, handleAddtoCart, handleGetCart,
+    handleDeleteCart, HandleCheckOut, getHistoryService, handleGetProductBySearch
+}

@@ -1,4 +1,5 @@
-const { getdataDetailService, MarkdownService, sortProductService, handleAddtoCart, handleGetCart, handleDeleteCart, HandleCheckOut, getHistoryService } = require("../sevices/ProductService")
+const { getdataDetailService, MarkdownService, sortProductService, handleAddtoCart,
+    handleGetCart, handleDeleteCart, HandleCheckOut, getHistoryService, handleGetProductBySearch } = require("../sevices/ProductService")
 
 const getDetailProduct = async (req, res) => {
     try {
@@ -112,4 +113,19 @@ const getHistory = async (req, res) => {
         })
     }
 }
-module.exports = { getDetailProduct, handleMarkDown, fetchAllProductBySort, addToCart, getCart, DeleteCart, Ordercheckout, getHistory }
+const productSearch = async (req, res) => {
+    try {
+
+        let { name } = req.query
+        let response = await handleGetProductBySearch(name)
+        return res.status(200).json(response)
+
+    } catch (e) {
+        console.log(e)
+        return res.status(404).json({
+            EC: 1,
+            MES: 'err From sv'
+        })
+    }
+}
+module.exports = { getDetailProduct, handleMarkDown, fetchAllProductBySort, addToCart, getCart, DeleteCart, Ordercheckout, getHistory, productSearch }
