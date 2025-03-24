@@ -283,12 +283,66 @@ const getHistoryService = async (userId) => {
                 MES: 'missing id'
             })
         }
-        let orders = await connection.Order.find({ userId }).populate('items.productId', 'nameProduct price image1',);
+        if (userId === 'ALL_ORDERS') {
+            let orders = await connection.Order.find().populate('items.productId', 'nameProduct count image1',);
+            return ({
+                EC: 0,
+                MES: "get all order success",
+                orders
+            });
+        }
+        let orders = await connection.Order.find({ userId }).populate('items.productId', 'nameProduct count image1',);
         return ({
             EC: 0,
             MES: "get history success",
             orders
         });
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+const handleStatusOrder = async (orderId, status) => {
+    try {
+        if (status === 'DELETE') {
+            const order = await connection.Order.deleteOne({ _id: orderId })
+            if (!order) {
+                return ({
+                    EC: 2,
+                    MES: 'Order not found'
+                })
+            }
+            else {
+                return ({
+                    EC: 0,
+                    MES: 'Delete order Success'
+                })
+            }
+        }
+        let newStatus = ''
+        if (status === 'OK') {
+            newStatus = 'Completed'
+        }
+        else if (status === 'NO') {
+            newStatus = 'Canceled'
+        }
+        else {
+            return ({
+                EC: -1,
+                MES: 'Invalid Status'
+            })
+        }
+        const order = await connection.Order.findByIdAndUpdate(orderId, { status: newStatus })
+        if (!order) {
+            return ({
+                EC: 2,
+                MES: 'Order not found'
+            })
+        }
+        return ({
+            EC: 0,
+            MES: 'Order status updated Success'
+        })
     } catch (e) {
         console.log(e)
     }
@@ -324,5 +378,5 @@ const handleGetProductBySearch = async (name) => {
 }
 module.exports = {
     getdataDetailService, MarkdownService, sortProductService, handleAddtoCart, handleGetCart,
-    handleDeleteCart, HandleCheckOut, getHistoryService, handleGetProductBySearch
+    handleDeleteCart, HandleCheckOut, getHistoryService, handleGetProductBySearch, handleStatusOrder
 }

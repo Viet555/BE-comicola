@@ -8,7 +8,9 @@ const Router = require('./routes/api')
 const port = process.env.PORT || 8888;
 const hostname = process.env.HOST_NAME;
 const cors = require('cors');
-const configViewEngine = require('./config/viewEngine')
+const configViewEngine = require('./config/viewEngine');
+const { createJWT, verifyToken } = require('./Middleware/JWTAction');
+const cookieParser = require('cookie-parser');
 
 //config req.body => laasy len data
 // app.use(function (req, res, next) {
@@ -19,18 +21,28 @@ const configViewEngine = require('./config/viewEngine')
 //     next();
 // });
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extends: true }))
 
 //config viewEngine
+app.use(cookieParser())
 configViewEngine(app);
+
 
 //khai bao route
 // app.use('/', webRoutes);
+
 app.use('/', Router)
+app.use((req, res) => {
+    return res.send('404 not found')
+})
 app.listen(port, hostname, () => {
     console.log(`example app listening on port ${port}`)
 })

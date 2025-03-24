@@ -279,8 +279,6 @@ const handleUpdateBanner = (dataBanner) => {
                             productId: dataBanner.productId,
                             image: dataBanner.image
                         },
-
-
                     }, { new: true }
 
                 )
@@ -305,8 +303,6 @@ const handleUpdateBanner = (dataBanner) => {
                             productId: dataBanner.productId,
                             image: dataBanner.image
                         },
-
-
                     }, { new: true }
 
                 )

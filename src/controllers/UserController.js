@@ -1,9 +1,10 @@
+const { refreshTokenService } = require("../sevices/JWTService")
 const { CreateUserService, UserLogin, handleGetAllUser, handleDeleteUser, handleUpdateUser } = require("../sevices/UserSevice")
 
 const CreateUser = async (req, res) => {
     try {
         let data = await CreateUserService(req.body)
-        return res.status(200).json(data)
+        return res.status(400).json(data)
     } catch (e) {
         console.log(e)
     }
@@ -15,7 +16,7 @@ const handleLogin = async (req, res) => {
         return res.status(200).json(userData)
     } catch (e) {
         console.log(e)
-        return res.status(200).json({
+        return res.status(400).json({
             EC: '-1',
             MES: 'ERR FORM SV'
         })
@@ -35,7 +36,7 @@ const getAllUser = async (req, res) => {
         return res.status(200).json(data)
     } catch (e) {
         console.log(e)
-        return res.status(200).json({
+        return res.status(400).json({
             EC: 1,
             MES: 'ERR FROM SV'
         })
@@ -48,7 +49,7 @@ const deleteUser = async (req, res) => {
         return res.status(200).json(response)
     } catch (e) {
         console.log(e)
-        return res.status(200).json({
+        return res.status(400).json({
             EC: 1,
             MES: 'ERR FROM SV'
         })
@@ -60,10 +61,23 @@ const UpdateUser = async (req, res) => {
         return res.status(200).json(dataUpdate)
     } catch (e) {
         console.log(e)
+        return res.status(400).json({
+            EC: -1,
+            MES: 'ERR FROM SV'
+        })
+    }
+}
+const handleRefreshToken = async (req, res) => {
+    try {
+        let { refreshToken } = req.body;
+        let data = await refreshTokenService(refreshToken)
+        return res.status(200).json(data)
+    } catch (e) {
+        console.log(e)
         return res.status(200).json({
             EC: -1,
             MES: 'ERR FROM SV'
         })
     }
 }
-module.exports = { CreateUser, handleLogin, getAllUser, deleteUser, UpdateUser }
+module.exports = { CreateUser, handleLogin, getAllUser, deleteUser, UpdateUser, handleRefreshToken }

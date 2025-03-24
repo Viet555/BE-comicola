@@ -1,5 +1,6 @@
 const connection = require('../config/ConfigDataBase')
-
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const salt = bcrypt.genSaltSync(10);
 const CreateUserService = (dataUser) => {
@@ -113,9 +114,19 @@ const UserLogin = async (dataLog) => {
                         if (!cart) {
                             userData.cart = {}
                         }
+                        let payload = ({
+                            email: user.email,
+                            role: user.roleId
+                        })
+                        let key = process.env.JWT_SECRET
+
+                        let token = jwt.sign(payload, key, { expiresIn: process.env.JWT_EXPIRE })
+                        let refreshToken = jwt.sign(payload, key, { expiresIn: '7d' });
                         resolve({
                             EC: 0,
                             MES: ' Login Sucess',
+                            refreshToken: refreshToken,
+                            token: token,
                             data: userData,
 
                         })
