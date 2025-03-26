@@ -23,6 +23,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.3",
     "mysql2": "2.3.3",
+    "nodemailer": "^6.10.0",
     "sass": "^1.79.4"
   },
   "devDependencies": {

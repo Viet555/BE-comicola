@@ -25,14 +25,18 @@ const refreshTokenService = (refreshToken) => {
                         }
                     );
                 }
-                const newAccessToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '15m' });
+                const payload = {
+                    email: user.email,
+                    role: user.roleId
+                };
+                const newAccessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' });
                 resolve({
                     EC: 0,
                     accessToken: newAccessToken
                 })
             })
         } catch (e) {
-            console.log(e)
+            reject(e)
         }
     })
 

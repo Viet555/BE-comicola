@@ -8,10 +8,11 @@ const { authMiddleware, authorize } = require('../Middleware/JWTAction')
 
 const Router = express.Router()
 //user
+Router.put('/api/UpdateUser', UpdateUser)
 Router.post('/api/CreateUSer', CreateUser)
 Router.post('/api/LoginUser', handleLogin)
 
-Router.get('/api/GetAllUser', authorize(['admin']), getAllUser)
+Router.get('/api/GetAllUser', authMiddleware, authorize(['admin']), getAllUser)
 Router.put('/api/UpdateUser', authMiddleware, UpdateUser)
 Router.delete('/api/DeleteUser', authMiddleware, authorize(['admin']), deleteUser)
 

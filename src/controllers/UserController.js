@@ -4,9 +4,13 @@ const { CreateUserService, UserLogin, handleGetAllUser, handleDeleteUser, handle
 const CreateUser = async (req, res) => {
     try {
         let data = await CreateUserService(req.body)
-        return res.status(400).json(data)
+        return res.status(200).json(data)
     } catch (e) {
         console.log(e)
+        return res.status(400).json({
+            EC: -1,
+            MES: 'err From sv'
+        })
     }
 }
 const handleLogin = async (req, res) => {

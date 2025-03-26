@@ -85,9 +85,9 @@ const DeleteCart = async (req, res) => {
 }
 const Ordercheckout = async (req, res) => {
     try {
-        let { userId, paymentMethod, address, phoneNumber } = req.body
+        let { email, userId, paymentMethod, address, phoneNumber } = req.body
 
-        let response = await HandleCheckOut(userId, paymentMethod, address, phoneNumber)
+        let response = await HandleCheckOut(userId, paymentMethod, address, phoneNumber, email)
         return res.status(200).json(response)
 
     } catch (e) {

@@ -1,5 +1,6 @@
 const { Connection } = require('mongoose');
-const connection = require('../config/ConfigDataBase')
+const connection = require('../config/ConfigDataBase');
+const { sendSimpleEmail } = require('./emailService');
 const getdataDetailService = async (id) => {
     try {
         if (!id) {
@@ -233,9 +234,10 @@ const handleDeleteCart = async (userId, productId) => {
         console.log(error)
     }
 }
-const HandleCheckOut = async (userId, paymentMethod, address, phoneNumber) => {
+const HandleCheckOut = async (userId, paymentMethod, address, phoneNumber, email) => {
+
     try {
-        if (!address || !phoneNumber) {
+        if (!address || !phoneNumber || !paymentMethod || !userId || !email) {
             return ({
                 EC: -2,
                 MES: 'Missing input '
@@ -261,8 +263,8 @@ const HandleCheckOut = async (userId, paymentMethod, address, phoneNumber) => {
             status: 'Pending',
             address: address,
             phoneNumber: phoneNumber,
-            orderCode: `ORD-${Math.floor(1000 + Math.random() * 9000)}`
-
+            orderCode: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
+            email: email
         })
         await order.save();
         await connection.Cart.deleteOne({ userId })
@@ -284,7 +286,7 @@ const getHistoryService = async (userId) => {
             })
         }
         if (userId === 'ALL_ORDERS') {
-            let orders = await connection.Order.find().populate('items.productId', 'nameProduct count image1',);
+            let orders = await connection.Order.find().populate('items.productId', 'nameProduct count image1',).sort({ createdAt: -1 });;
             return ({
                 EC: 0,
                 MES: "get all order success",
@@ -332,13 +334,27 @@ const handleStatusOrder = async (orderId, status) => {
                 MES: 'Invalid Status'
             })
         }
-        const order = await connection.Order.findByIdAndUpdate(orderId, { status: newStatus })
+        const order = await connection.Order.findById(orderId).populate('items.productId');
         if (!order) {
             return ({
                 EC: 2,
                 MES: 'Order not found'
-            })
+            });
         }
+        order.status = newStatus;
+        await order.save();
+
+        email = order?.email
+        sendSimpleEmail({
+            receiverEmail: email,
+            orderDetails: {
+                orderCode: order.orderCode,
+                address: order.address,
+                phoneNumber: order.phoneNumber,
+                totalAmount: order.totalAmount,
+                items: order.items
+            }
+        })
         return ({
             EC: 0,
             MES: 'Order status updated Success'

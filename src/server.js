@@ -9,7 +9,6 @@ const port = process.env.PORT || 8888;
 const hostname = process.env.HOST_NAME;
 const cors = require('cors');
 const configViewEngine = require('./config/viewEngine');
-const { createJWT, verifyToken } = require('./Middleware/JWTAction');
 const cookieParser = require('cookie-parser');
 
 //config req.body => laasy len data
