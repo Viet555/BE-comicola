@@ -49,4 +49,5 @@ const sendSimpleEmail = async (dataSend) => {
         html: emailContent
     });
 }
+
 module.exports = { sendSimpleEmail }

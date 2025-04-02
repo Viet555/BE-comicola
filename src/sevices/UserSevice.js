@@ -23,6 +23,7 @@ const CreateUserService = (dataUser) => {
             }
             let hashPasswordUser = await hashUserPassword(dataUser.password)
             if (checkEmail == false) {
+                let roleId = ''
                 if (!dataUser.roleId) {
                     roleId = 'User'
                 }
@@ -32,7 +33,7 @@ const CreateUserService = (dataUser) => {
                     lastName: dataUser.lastName,
                     password: hashPasswordUser,
                     email: dataUser.email,
-                    roleId: dataUser.roleId,
+                    roleId: roleId,
                     image: dataUser.image,
                     gender: dataUser.gender,
                     address: dataUser.address,

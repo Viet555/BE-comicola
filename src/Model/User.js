@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema({
     phoneNumber: { type: String, },
     positionId: { type: String, },
     cart: { type: mongoose.Schema.Types.ObjectId, ref: 'Cart' },
+    resetPasswordToken: { type: String, default: null },
+    resetPasswordExpires: { type: Date, default: null }
 });
 
 const User = mongoose.model('User', userSchema);

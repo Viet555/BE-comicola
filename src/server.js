@@ -4,7 +4,7 @@ require('dotenv').config();
 const webRoutes = require('./routes/web')
 const connection = require('./config/ConfigDataBase')
 const Router = require('./routes/api')
-
+const routerPass = require('./sevices/ResertPassword')
 const port = process.env.PORT || 8888;
 const hostname = process.env.HOST_NAME;
 const cors = require('cors');
@@ -39,6 +39,7 @@ configViewEngine(app);
 // app.use('/', webRoutes);
 
 app.use('/', Router)
+app.use('/', routerPass)
 app.use((req, res) => {
     return res.send('404 not found')
 })
