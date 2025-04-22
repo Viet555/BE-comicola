@@ -215,9 +215,16 @@ const handleCreateBanner = (dataBanner) => {
             else {
                 // Chuyển productId từ String sang ObjectId
                 const productObjectId = new mongoose.Types.ObjectId(dataBanner.productId);
-                let check = await connection.Banner.find({ "bannerHeader.productId": productObjectId })
+                // Tìm document chứa banner có productId trùng trong bannerHeader hoặc bannerMidle
+                const check = await connection.Banner.findOne({
+                    $or: [
+                        { 'bannerHeader.productId': productObjectId },
+                        // { 'bannerFooter.productId': productObjectId },
+                        { 'bannerMidle.productId': productObjectId }
+                    ]
+                });
 
-                if (check.length === 0) {
+                if (!check) {
                     if (dataBanner && dataBanner.action === 'Bfirst') {
                         let data = await connection.Banner.create(
                             {
@@ -230,7 +237,6 @@ const handleCreateBanner = (dataBanner) => {
                         resolve({
                             EC: 0,
                             MES: 'Create Banner Header Succsess',
-                            data
                         })
                     }
                     if (dataBanner && dataBanner.action === 'Bsecond') {
@@ -245,7 +251,7 @@ const handleCreateBanner = (dataBanner) => {
                         resolve({
                             EC: 0,
                             MES: 'Create Banner middle Succsess',
-                            data
+
                         })
                     }
                 } else {
@@ -338,7 +344,7 @@ const fetchAllBanner = async (action, limit) => {
                     .select('bannerHeader')
                     .select('-bannerMidle')
                     .populate("bannerHeader.productId")
-                    .sort({ createdAt: -1 });
+                    .sort({ createdAt: 1 });
                 return {
                     EC: 0,
                     data

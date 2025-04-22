@@ -39,7 +39,7 @@ const sendSimpleEmail = async (dataSend) => {
             </tbody>
         </table>
         <p><strong>Tổng tiền:</strong> ${dataSend.orderDetails.totalAmount.toLocaleString()} VND</p>
-        <p>Cảm ơn bạn đã mua hàng! 😊</p>
+        <p>Đơn hàng sẽ được giao đến bạn xớm nhất có thể .Cảm ơn bạn đã mua hàng! 😊</p>
     `;
     const info = await transporter.sendMail({
         from: '"COMICOLA 🥳🎉" <ngoqviet1011@gmail.com>',

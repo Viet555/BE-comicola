@@ -29,13 +29,13 @@ routerPass.post('/forgot-password', async (req, res) => {
             return res.status(404).json({ message: "Email không tồn tại!" });
         }
 
-        // Tạo token reset
+
         const resetToken = uuidv4();
         user.resetPasswordToken = resetToken;
-        user.resetPasswordExpires = Date.now() + 36000; // Hết hạn sau 1 giờ
+        user.resetPasswordExpires = Date.now() + 36000;
         await user.save();
 
-        // Gửi email
+
         const resetLink = `http://localhost:3000/reset-password/${resetToken}`;
         await transporter.sendMail({
             from: '"COMICOLA 🥳🎉" <ngoqviet1011@gmail.com>',
@@ -63,7 +63,6 @@ routerPass.post('/reset-password/:token', async (req, res) => {
             return res.status(400).json({ message: "Token không hợp lệ hoặc đã hết hạn!" });
         }
 
-        // Mã hóa mật khẩu mới
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
         user.resetPasswordToken = null;

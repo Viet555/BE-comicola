@@ -25,7 +25,7 @@ const CreateUserService = (dataUser) => {
             if (checkEmail == false) {
                 let roleId = ''
                 if (!dataUser.roleId) {
-                    roleId = 'User'
+                    roleId = 'user'
                 }
                 let data = await connection.User.create({
 
@@ -33,7 +33,7 @@ const CreateUserService = (dataUser) => {
                     lastName: dataUser.lastName,
                     password: hashPasswordUser,
                     email: dataUser.email,
-                    roleId: roleId,
+                    roleId: dataUser.roleId || roleId,
                     image: dataUser.image,
                     gender: dataUser.gender,
                     address: dataUser.address,
@@ -267,8 +267,10 @@ const handleUpdateUser = (dataEdit) => {
                         EC: -1,
                         MES: 'Mật khẩu hiện tại không chính xác'
                     })
+                } else {
+                    updateData.password = await hashUserPassword(dataEdit.newPassword)
                 }
-                updateData.password = await hashUserPassword(dataEdit.newPassword)
+
             }
 
             let User = await connection.User.findOneAndUpdate({

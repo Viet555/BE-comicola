@@ -14,7 +14,14 @@ const BannerSchema = new mongoose.Schema({
             image: { type: String, required: true, },
             productId: { type: mongoose.Schema.Types.String, ref: 'Product', required: true, }
         }
-    ]
+    ],
+    // bannerFooter: [
+    //     {
+    //         name: { type: String, required: true },
+    //         image: { type: String, required: true, },
+    //         productId: { type: mongoose.Schema.Types.String, ref: 'Product', required: true, }
+    //     }
+    // ]
 }, { timestamps: true });
 
 const Banner = mongoose.model("Banner", BannerSchema);
